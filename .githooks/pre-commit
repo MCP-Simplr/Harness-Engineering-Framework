@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Warn-only: surfaces possible dangling references to paths/names deleted by
+# this commit (see scripts/check_dangling_refs.py's own docstring for the
+# full rationale). Never blocks the commit — a human or the reviewer
+# subagent classifies each hit, same as they always have; this just saves
+# them from having to grep by hand across multiple review rounds.
+#
+# Enable with: git config core.hooksPath .githooks
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# uv run, not a bare `python3`/`python` — neither is reliably on PATH across
+# every dev environment (a native Windows checkout commonly has neither name
+# resolve), and uv is a reasonable cross-platform baseline if this workspace
+# uses Python (see root justfile). Swap this line for your own toolchain's
+# equivalent if you're not using uv.
+cd "$ROOT" && uv run python scripts/check_dangling_refs.py || true
+exit 0

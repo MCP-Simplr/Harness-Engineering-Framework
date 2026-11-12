@@ -1,0 +1,38 @@
+# Annotated pattern only — NOT a working workflow (hence the .template
+# suffix; rename to .yml and fill in the placeholders to activate it).
+#
+# The pattern worth keeping: merging to `main` is the deploy trigger for
+# the changed project, path-filtered so unrelated projects' merges don't
+# redeploy this one. See .claude/harness/workflow.md §6 — this is why the
+# pre-merge review gate has to be taken seriously: there's no separate
+# "now deploy" step after it.
+
+name: Deploy <project-a>
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "<project-a>/**"
+      - ".github/workflows/deploy-<project-a>.yml"
+
+permissions:
+  contents: read
+  id-token: write # for OIDC-based cloud auth — avoid long-lived static keys
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # OIDC auth to your cloud provider goes here — e.g. google-github-
+      # actions/auth with workload_identity_provider + service_account,
+      # or the equivalent for AWS/Azure. Only the provider/SA identifiers
+      # belong in GitHub Variables; everything else (project config,
+      # connection strings) belongs in your secret manager, not here.
+      - name: Authenticate to cloud provider
+        run: echo "<fill in your provider's OIDC auth action>"
+
+      - name: Build and deploy
+        run: echo "<fill in your build/deploy commands for <project-a>>"

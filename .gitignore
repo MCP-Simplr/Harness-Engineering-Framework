@@ -1,0 +1,30 @@
+# Live cross-project coordination scratchpad (.claude/harness/workflow.md
+# §2) — reflects the current moment only, never worth version-controlling.
+/WHITEBOARD.md
+
+# Local-only Claude Code settings overrides — copy from
+# .claude/settings.local.json.example instead of committing your own.
+/.claude/settings.local.json
+
+# Python workspace — one shared venv at the repo root instead of each
+# project managing its own.
+**/.venv
+**/__pycache__
+**/*.egg-info
+**/.pytest_cache
+**/.ruff_cache
+
+# Node projects
+node_modules/
+dist/
+.vite/
+
+# Env files / secrets — never commit these.
+.env
+*.env
+# Add any cloud-provider service-account/credential file patterns your
+# own deploy setup uses, e.g. *-service-account.json.
+
+# Editor/IDE
+.idea/
+.vscode/

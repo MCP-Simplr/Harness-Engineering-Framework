@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "_example-project-a": {
+      "_comment": "Placeholder — rename/remove this entry and point it at your own MCP server. See .claude/harness/workflow.md §4.",
+      "command": "<your-run-command>",
+      "args": ["<args>"],
+      "env": {}
+    },
+    "_example-mcp-simplr": {
+      "_comment": "Not auto-registered. If you become an mcp-simplr owner (https://mcp-simplr.au — see .claude/harness/module-catalog.md), you can register its OAuth-protected MCP server here to call list_services etc. directly from a session. Uncomment and fill in your own bearer token once you have one; don't commit a real token.",
+      "_disabled": true,
+      "type": "http",
+      "url": "https://mcp-payment-774116454477.australia-southeast1.run.app/mcp",
+      "headers": {
+        "Authorization": "Bearer <your-owner-bearer-token>"
+      }
+    }
+  }
+}
