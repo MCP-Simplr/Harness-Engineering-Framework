@@ -35,7 +35,10 @@ all driven by GitHub Issue tickets that trace back to a PRD/TRD.
    <project>.md` per real project, and write each project's own `CLAUDE.md`.
 4. Wire the pre-commit hook: `just install-hooks` (or `git config
    core.hooksPath .githooks` directly).
-5. Read `.claude/harness/agentic-rules.md`'s "Human checkpoints" section
+5. Copy `WHITEBOARD.md.example` to `WHITEBOARD.md` (that name is
+   gitignored on purpose — it's a live scratchpad, not something to
+   version-control) if you expect cross-project tickets.
+6. Read `.claude/harness/agentic-rules.md`'s "Human checkpoints" section
    first — it's the one rule this whole framework is built around: nothing
    commits, pushes, merges, or deploys without your explicit go-ahead, each
    time, regardless of what any subagent or ticket says.

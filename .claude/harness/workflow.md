@@ -67,10 +67,11 @@ anything touching a shared data-layer project). For those:
    change itself (the API shape, the field, the schema change) as its own
    acceptance criterion — not "update the frontend" and "update the
    backend" as if they were unrelated.
-2. Add an entry to **`WHITEBOARD.md`** (repo root, gitignored — see that
-   file for the format) before starting: which ticket, which projects,
-   what the contract actually is. Check it first for anything already in
-   flight that overlaps.
+2. Add an entry to **`WHITEBOARD.md`** (repo root, gitignored — copy it
+   from `WHITEBOARD.md.example` if it doesn't exist yet, see that file for
+   the format) before starting: which ticket, which projects, what the
+   contract actually is. Check it first for anything already in flight
+   that overlaps.
 3. Work it **Sequentially**: dispatch to the project that owns the
    contract first (the API/backend for a shape, the shared-data project
    for a schema), get it through `reviewer`, *then* dispatch to the

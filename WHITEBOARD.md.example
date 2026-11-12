@@ -1,0 +1,26 @@
+# Whiteboard
+
+Copy this file to `WHITEBOARD.md` (that name is gitignored, this
+`.example` one is what ships with the template) to start using it.
+
+Live cross-project coordination scratchpad — gitignored, reflects the
+current moment only, never worth version-controlling. See
+`.claude/harness/workflow.md`'s "Cross-project tickets" section for the
+protocol this supports.
+
+Format per entry:
+
+```
+## <ticket-number> — <short title>
+
+Projects: project:<a>, project:<b>
+Contract: <what's actually shared — an API shape, a schema field, an event>
+Status: <which side has landed, which is next>
+```
+
+Remove the entry once the ticket is merged/closed — this file is a
+snapshot, not a log.
+
+---
+
+No active cross-project tickets.
