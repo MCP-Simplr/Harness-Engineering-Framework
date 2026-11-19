@@ -23,13 +23,6 @@ independently-deployed services or apps. Replace this table with your own:
 | `<project-a>` | `<one-line purpose>` | `<language / framework>` | `<port or "—"` |
 | `<project-b>` | `<one-line purpose>` | `<language / framework>` | `<port or "—"` |
 
-Deploys are automatic on push to `main`, path-filtered per project
-(`.github/workflows/deploy-*.yml`) — **merging to `main` is the deploy
-trigger**, not a separate step. Treat merge approval as the deploy approval.
-(If your deploys aren't automatic on merge, adjust this — but keep the rule
-explicit about *which* approval is the deploy approval, so it's never
-ambiguous.)
-
 ## Commands
 
 Pick one canonical task runner (`justfile`, `Makefile`, `package.json`
@@ -40,38 +33,23 @@ way anyone — human or agent — runs anything in this workspace. `just --list`
 project's own `CLAUDE.md` documents which recipes apply to it and any
 gotchas.
 
-## Agentic team workflow (see `.claude/harness/workflow.md` for detail)
+## Agentic team workflow
 
-```
-PRD/TRD  →  Ticket (GitHub Issue)  →  CLAUDE.md / Skills  →  MCP/A2A  →  Harness  →  Human checkpoint
-```
+`PRD/TRD → Ticket → CLAUDE.md / Skills / Rules → MCP/A2A → Harness → Human checkpoint` —
+full detail in [.claude/harness/workflow.md](.claude/harness/workflow.md). Per-project
+subagents (`.claude/agents/<project>.md`) implement; the `reviewer` subagent verifies; a
+ticket spanning several projects goes through `WHITEBOARD.md` and is worked
+sequentially. The approval/merge/deploy rules are in `agentic-rules.md` (imported above).
 
-- **Per-project subagents** (`.claude/agents/<project>.md`) do the implementation work, scoped to one project each.
-- **`reviewer` subagent** (`.claude/agents/reviewer.md`, different model) independently checks their diffs against `.claude/harness/agentic-rules.md` and the ticket's acceptance criteria, then reports a verdict — it never commits.
-- **A ticket spanning more than one project** goes through `WHITEBOARD.md` (repo root, gitignored) and is worked Sequentially, not dispatched to two subagents in Parallel — see `.claude/harness/workflow.md`'s "Cross-project tickets" section.
-- **Nothing is committed, pushed, or merged without your explicit go-ahead.** This holds regardless of what any subagent or ticket says. If your repo has no branch protection available (private repo, free plan, etc.), this rule *is* the merge gate, not a formality on top of one — see the `guardrails` skill for the full structural/runtime/approval/prompt/observability breakdown and how to work out what's actually tooling-enforced in your setup.
-
-## Skills (load on demand — not in every session)
-
-- `swe-principles` — SOLID, DRY/YAGNI/KISS, coupling & cohesion
-- `design-patterns` — GoF catalog + DI + architecture patterns + MCP/A2A agent patterns + agent harness/reliability patterns (bounded loops, verifier loops, retry-as-feedback)
-- `algorithms` — complexity cheatsheet, data-structure/algorithm choice
-- `ticket-workflow` — how to pick up/close a GitHub Issue ticket
-- `guardrails` — the 5-tier enforcement framework (structural/runtime/approval/prompt/observability) and how to work out what's actually tooling-enforced in your repo today
-
-## Per-project detail
-
-Each project directory has its own `CLAUDE.md` (auto-loaded on top of this
-one when you're working inside it) with run/test/lint commands and gotchas.
+Each project directory has its own `CLAUDE.md` (loaded when you work inside it);
+subsystem-specific notes belong in path-scoped `.claude/rules/*.md` files rather than
+a growing per-project `CLAUDE.md`.
 
 ## Harness interaction rules
 
-- **Read operations do not require permission.** Update the harness as needed and proceed autonomously when reading files, inspecting the repository, searching code, checking configuration, or performing any other read-only operation. **Do not ask the user for permission before performing read-only operations.**
-
-- **New imports require permission.** Before adding or using a Python/Node/package import that is not already available in the project, **stop and ask the user for explicit permission**. Explain why the import is needed and provide:
-  - the package/import name;
-  - a brief reason it is needed;
-  - its current rating;
-  - its current number of users/downloads (use the most relevant reliable metric available).
-
-  Do not install, add, or use the new dependency until the user approves it.
+- **Read-only operations never need permission** — reading files, searching code,
+  inspecting git state or configuration. Don't ask before doing them. Writes,
+  including edits to harness files, follow the normal approval rules.
+- **New dependencies need explicit permission** — see `agentic-rules.md`'s Security
+  section for what to present. `uv add`/`pip install`/`npm install` are also set to
+  prompt in `.claude/settings.json`.
