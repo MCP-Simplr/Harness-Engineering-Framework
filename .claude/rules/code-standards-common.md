@@ -33,6 +33,24 @@ not to keep noting it by hand forever.
   heavy import (e.g. a large ML library) gated behind a rarely-used code
   path for startup-time reasons. "It's only used in this one function" is
   not a reason — that's what imports are for.
+- **Comment any line whose purpose isn't obvious from reading it** — a
+  dense expression, a regex, date/bit/money arithmetic, a non-obvious API
+  call or workaround. One comment, ≤20 words, saying what the line does or
+  why it's there. Don't comment lines that already read plainly
+  (`total += price`): restating an obvious line is noise that goes stale.
+- **Function docstrings/summaries: 30 words or less.** Exception: a
+  docstring meant to give an LLM/agent context (e.g. an MCP tool
+  description) can run longer if that context is genuinely needed. When
+  trimming, cut restated-*what* before non-obvious *why* (a security
+  invariant, a footgun, a known limitation).
+- **Write for the next human reader — simplify before handing off.**
+  Prefer descriptive names over abbreviations, early returns over nested
+  branches, a few plain statements over one dense chained/nested
+  expression (split nested comprehensions and ternaries), and the
+  straightforward version over a clever one. Compact or clever code is
+  acceptable only where it's measurably needed (e.g. a hot path) — say so
+  in a comment. Simplifying must preserve behavior, and stays inside the
+  code the ticket touches (`agentic-rules.md`: keep diffs scoped).
 
 Python-only mechanical rules (PEP 8 naming, typed-model-over-dict,
 `constants.py`) live in `.claude/rules/python-code-standards.md` instead —

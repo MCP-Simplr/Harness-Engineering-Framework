@@ -1,6 +1,6 @@
 ---
 name: design-patterns
-description: Classic design patterns (creational, structural, behavioral GoF catalog, dependency injection, architecture-level patterns) AND a classic anti-pattern catalog (God Object, Spaghetti Code, Shotgun Surgery, Copy-Paste Programming, etc.) mapped to their fixes, AND multi-agent/AI-specific patterns (MCP tool design, A2A orchestrator-worker, planner-executor, reviewer-critic) AND agent harness/reliability patterns (bounded loops, verifier loops, retry-as-feedback design, validation layers). Use when choosing how to structure a class/module hierarchy, deciding between two ways to wire dependencies, designing a new MCP tool or a new agent-to-agent relationship, reviewing a diff for a better-fitting pattern or a classic code-smell anti-pattern, or hardening an agent's tool-calling loop against silent failure/runaway retries/prompt injection. Not for basic language syntax.
+description: Classic design patterns (creational, structural, behavioral GoF catalog, dependency injection, architecture-level patterns) AND a classic anti-pattern catalog (God Object, Spaghetti Code, Shotgun Surgery, Copy-Paste Programming, Clever Code, etc.) mapped to their fixes, AND multi-agent/AI-specific patterns (MCP tool design, A2A orchestrator-worker, planner-executor, reviewer-critic) AND agent harness/reliability patterns (bounded loops, verifier loops, retry-as-feedback design, validation layers). Use when choosing how to structure a class/module hierarchy, deciding between two ways to wire dependencies, designing a new MCP tool or a new agent-to-agent relationship, reviewing a diff for a better-fitting pattern or a classic code-smell anti-pattern, or hardening an agent's tool-calling loop against silent failure/runaway retries/prompt injection. Not for basic language syntax.
 ---
 
 # Design patterns
@@ -13,7 +13,7 @@ Three reference files — read whichever fits the question:
   Saga).
 - `references/anti-patterns.md` — the reverse view of the classic catalog:
   named code smells (God Object, Spaghetti Code, Shotgun Surgery,
-  Copy-Paste Programming, etc.) each mapped to the pattern in
+  Copy-Paste Programming, Clever Code, etc.) each mapped to the pattern in
   `patterns.md`/`swe-principles` that fixes or prevents it. Read this one
   when reviewing a diff for what's *wrong*, not what pattern to reach for
   next.

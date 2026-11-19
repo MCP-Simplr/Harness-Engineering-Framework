@@ -11,6 +11,11 @@ and `.claude/harness/agentic-rules.md` for the workspace-wide rules —
 neither loads automatically for you; this file only covers your role in
 the workflow.
 
+Also read every `.claude/rules/*.md` whose `paths:` frontmatter matches a
+file you're about to change — project invariants (money movement, auth,
+migrations) and code standards live there, and you can't rely on them
+auto-loading for you.
+
 ## Scope
 
 - Stay inside `<project-a>/`. Note here what it does and doesn't depend on

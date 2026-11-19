@@ -1,8 +1,9 @@
 {
-  "_comment": "Copy this to .claude/settings.local.json (gitignored) and adapt. Local-only overrides: a safe read-mostly command allowlist, output style, and any project MCP servers you want disabled in this session.",
+  "_comment": "Copy this to .claude/settings.local.json (gitignored) and adapt. Local-only overrides: a safe read-only command allowlist (never allow commands the shared .claude/settings.json sets to ask), output style, and any project MCP servers you want disabled in this session.",
   "permissions": {
     "allow": [
-      "Bash(gh issue *)"
+      "Bash(gh issue view *)",
+      "Bash(gh issue list *)"
     ]
   },
   "outputStyle": "Concise",

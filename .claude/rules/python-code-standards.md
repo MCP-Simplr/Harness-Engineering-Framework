@@ -6,7 +6,7 @@ paths:
 # Code-level standards — Python-only (reviewer-checked convention, not linter-enforced, unless you wire up the tooling — see `guardrails`)
 
 Cross-cutting rules that also apply to TypeScript (file/function length,
-magic numbers, imports-at-top, etc.) live in `.claude/rules/
+magic numbers, imports-at-top, line comments, readability, etc.) live in `.claude/rules/
 code-standards-common.md` instead — read both when editing a `.py` file.
 Same caveat as that file: nothing below is mechanically blocked yet; the
 `reviewer` subagent checks these by reading the diff. Treat a violation as

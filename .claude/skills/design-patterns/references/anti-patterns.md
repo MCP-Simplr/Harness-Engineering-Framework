@@ -23,8 +23,8 @@ calls) — check a diff against both when plausible either applies.
   the concern lives in one module (`swe-principles` coupling & cohesion).
 - **Golden Hammer** — reaching for a familiar heavy tool (an agent, a
   graph framework, a database) for a problem that doesn't need it. Fix:
-  KISS (`swe-principles`) — a deterministic calculation belongs in a plain
-  function, not a new agent, is this fix applied.
+  KISS (`swe-principles`) — putting a deterministic calculation in plain
+  code rather than a new agent is this fix applied.
 - **Boat Anchor** — unused code, a dead dependency, or a speculative
   abstraction kept "in case it's needed." Fix: YAGNI (`swe-principles`) —
   remove it; a removal ticket beats a comment explaining why it's still
@@ -65,6 +65,11 @@ calls) — check a diff against both when plausible either applies.
   API payload). Fix: cross-ref `.claude/rules/python-code-standards.md`'s
   "typed model over bare dict" rule; model the concept as its own type
   (a Value Object, in `patterns.md`'s architecture-pattern terms).
+- **Clever Code** — dense one-liners, nested comprehensions/ternaries, or
+  cryptic names that save lines but cost the next reader minutes. Fix:
+  cross-ref `.claude/rules/code-standards-common.md`'s readability rule —
+  plain statements, descriptive names, early returns; keep compact code
+  only where it's measurably needed, with a comment saying so.
 - **Anemic Domain Model** — data classes with no behavior, while all the
   logic that operates on them lives elsewhere as free-floating functions.
   Fix: Single Responsibility and encapsulation (`swe-principles`) — give

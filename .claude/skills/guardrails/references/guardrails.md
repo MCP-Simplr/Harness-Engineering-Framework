@@ -38,16 +38,16 @@ checkpoints fit together.
 |---|---|
 | Static analysis for dead code / unused imports on every PR | **buildable** — a linter (e.g. `ruff check`) not yet wired into CI would catch dead code and no-op assignments before a human has to |
 | Diff review flags files touched outside the ticket's stated scope | **on, agent-enforced** — `agentic-rules.md`'s "keep diffs scoped to the ticket" + the `reviewer` subagent's checklist; no tooling equivalent exists unless you build one (e.g. a CI job diffing changed-files against the ticket's declared project label) |
-| Security linter scans for hardcoded secrets / injection risks | **buildable** — nothing runs as CI by default; the built-in `security-review` skill covers this on demand (`agentic-rules.md`'s Security section requires the orchestrating session to run it on auth/payments/input-handling diffs), but it's invoked per-review, not a standing gate |
+| Security linter scans for hardcoded secrets / injection risks | **partially on** — `.claude/hooks/block_secrets.py` (PreToolUse on Write/Edit, wired in `.claude/settings.json`) blocks credential-shaped strings before Claude writes them; fail-open (a missing `uv` or a hook error lets the write through), and it doesn't see NotebookEdit, shell-redirect writes, human edits or commits, and nothing scans for injection. The built-in `security-review` skill covers the rest on demand (run by the orchestrating session on auth/payments/input-handling diffs — `agentic-rules.md`'s Security section), not as a standing gate |
 | Dependency/CVE scanner blocks known-vulnerable versions | **buildable** — your package manager's lockfile step may already surface yanked packages as a side effect; a real CVE scan (`pip-audit`, `npm audit`, Dependabot) may not be wired up |
-| New dependency vetted for supply-chain risk before it's added (typosquatting, unmaintained, suspicious install scripts) | **on, by convention, not tooling** — `agentic-rules.md`'s Security section requires this before installing anything; the `reviewer` treats an unvetted new dependency as a finding. Nothing mechanical blocks a bad package name from being installed — `npm audit signatures` / provenance attestation checks would be the buildable tooling equivalent |
+| New dependency vetted for supply-chain risk before it's added (typosquatting, unmaintained, suspicious install scripts) | **partially on** — `.claude/settings.json` makes `uv add`/`pip install`/`npm install` prompt for human approval; the vetting itself is convention (`agentic-rules.md`'s Security section; the `reviewer` treats an unvetted dependency as a finding). `npm audit signatures` / provenance checks would be the buildable tooling equivalent |
 | Mutation testing / property-based spot checks | **blocked** — meaningless before a test suite exists to mutate against |
 
 ## 🧑‍⚖️ Approval gates — human or reviewer-agent judgment required
 
 | Guardrail | Status |
 |---|---|
-| A second agent/human reviews every change before merge; generator can't self-approve | **on** — `.claude/agents/reviewer.md` (different, more capable model than the worker agents), plus the explicit human-approval requirement in `agentic-rules.md` |
+| A second agent/human reviews every change before merge; generator can't self-approve | **on** — `.claude/agents/reviewer.md` (different, more capable model than the worker agents), plus the explicit human-approval requirement in `agentic-rules.md`; `git commit`/`push`/`merge` and `gh pr merge` prompt via `.claude/settings.json` `ask` rules (Claude-side only — doesn't stop a human pushing) |
 | Architectural changes (new service, schema change, new external dependency) need explicit sign-off | **on, via PRD/TRD** — `.claude/harness/workflow.md` §1; a TRD is the mechanism, but nothing stops an agent from skipping straight to a ticket for something that should've had one — this is judgment, not enforced |
 | Agent must flag and pause when a task requires deviating from existing patterns, rather than improvising silently | **on, by instruction** — each per-project agent's "reuse existing patterns first" instruction; no mechanical detection of "this diverges from the codebase's own pattern" exists |
 | Refactors of shared/core code reviewed separately from the feature that motivated them | **partially on** — a shared-library project's agent definition should call out its high blast radius explicitly; the "cross-project ticket" rule in `workflow.md` covers the multi-project case, but a same-project refactor bundled into a feature PR isn't caught by anything specific |
@@ -61,8 +61,8 @@ Already the bulk of what's in `agentic-rules.md`, each project's
   DI) — `swe-principles`, `design-patterns`.
 - "Reuse before writing new code," diff-scoping, ticket-driven work —
   `agentic-rules.md`.
-- Error-handling style, comment density matching the surrounding code —
-  `swe-principles`.
+- Error-handling style — `swe-principles`; line comments and readability
+  — `.claude/rules/code-standards-common.md`.
 
 These hold only as well as an agent reads and follows them — nothing
 mechanical checks compliance. That's fine for style; it's a gap the moment
@@ -137,8 +137,10 @@ verdict, not a note for later:
   state — a `tool_call` with no matching result. Harmless-looking locally,
   a hard error on strict providers.
 - Commented-out code; a `TODO` with no linked issue.
-- A comment that restates the code or narrates which file/module something
-  moved to, instead of explaining a non-obvious *why*.
+- A comment that restates an obvious line or narrates which file/module
+  something moved to. (A ≤20-word what/why comment on a genuinely
+  non-obvious line is required, not an anti-pattern — see
+  `.claude/rules/code-standards-common.md`.)
 - `requests` called from inside an `async def` function (use `httpx`).
 - A magic number embedded in business logic instead of a named constant.
 - An `except Exception:` block with no log line and no comment.

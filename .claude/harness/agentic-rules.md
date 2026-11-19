@@ -5,21 +5,13 @@ Always-on, workspace-wide. Imported into every session via the root
 Generic SW-engineering knowledge (principles/patterns/algorithms) lives in
 `.claude/skills/` and loads only when relevant, not here.
 
-These rules are this repo's guardrails for how code gets written and
-merged — the `guardrails` skill has the full tiered breakdown (structural /
-runtime / approval / prompt / observability) and, important: which of
-those tiers are actually enforced by tooling versus just written down here.
-Work that out for your own repo and keep this section honest — a repo with
-no branch protection and no CI beyond deploy workflows should say so
-plainly, because then the human-checkpoint rule below is the real backstop,
-not a formality on top of mechanical checks.
-
-**Model tiers**: worker subagent = `haiku`, reviewer = `opus`,
-orchestrator (your own session) = `sonnet` — see `.claude/harness/
-workflow.md` §5 for the full breakdown and which of these are actually
-enforced by config versus advisory. Adjust the tiers to your own
-risk/cost tradeoff; this template's default favors cheap, fast workers
-backed by a stronger independent reviewer.
+Tooling-enforced out of the box: `.claude/settings.json` makes
+commit/push/merge, issue close/edit and dependency installs prompt for
+approval, and a PreToolUse hook (`.claude/hooks/block_secrets.py`) blocks
+writing credential-shaped strings. Everything else here is convention —
+keep this paragraph honest for your repo (branch protection? CI?), and see
+the `guardrails` skill for the tier breakdown. Model tiers are in
+`.claude/harness/workflow.md` §5.
 
 ## Human checkpoints — non-negotiable
 
@@ -27,15 +19,16 @@ backed by a stronger independent reviewer.
   status, or trigger a deploy unless the human explicitly asks for that
   action in this session. Approval given for one step (e.g. "implement this
   ticket") does not extend to the next (committing it) — each checkpoint in
-  `.claude/harness/workflow.md` needs its own go-ahead.
+  `.claude/harness/workflow.md` needs its own go-ahead. A permission prompt
+  is not a substitute for asking — ask in the conversation first.
 - Merging to `main` auto-deploys the changed project
   (`.github/workflows/deploy-*.yml`). Treat "merge" and "deploy" as the same
-  approval ask, not two.
+  approval ask, not two. If your deploys aren't automatic on merge, say
+  here which approval *is* the deploy approval.
 - Before anything reaches a human checkpoint, it must have gone through the
   `reviewer` subagent (`.claude/agents/reviewer.md`) — don't ask the human to
-  approve unreviewed work. If your repo has no branch protection available
-  to enforce this mechanically (see `guardrails`), the reviewer-subagent-
-  then-human sequence *is* the gate, not a formality on top of one.
+  approve unreviewed work. Without branch protection, this sequence *is*
+  the merge gate.
 - Don't auto-tick a test-plan or acceptance-criteria checkbox. A `- [x]` is
   a claim that someone ran the step — only the human or the `reviewer`
   subagent (by actually running it) gets to make that claim.
@@ -56,10 +49,6 @@ backed by a stronger independent reviewer.
 - A change to a prompt, plan, or LLM-invocation code path adds or updates a
   golden case in that project's eval harness, if it has one. Treat that the
   way "add a test" is treated for plain code, not as optional polish.
-- No secrets, API keys, or credentials in code, commit messages, or
-  `CLAUDE.md`/ticket text. Keep secrets in the one service/config store
-  that owns them (e.g. a secret manager), not scattered across projects or
-  checked into CI variables that don't need to hold them.
 - State what you verified and how. If something wasn't run or wasn't
   checked, say so — don't imply it passed.
 
@@ -76,17 +65,18 @@ backed by a stronger independent reviewer.
   invoke it. If you're dispatching a qualifying ticket to a project
   subagent, run `security-review` yourself once the diff exists, before or
   alongside sending it to `reviewer`.
-- **Never add a new third-party dependency (pip or npm) without vetting
-  it first**: exact name match to what you actually intend (watch for
-  typosquats — a name one character off a popular package, e.g.
-  `python-dotenv` vs. `dotenv`), real maintenance history and adoption,
-  no obfuscated or suspicious install-time scripts. If you can't verify
-  those quickly, don't install it — flag it to the human instead. This
-  applies even to a dependency an agent "recalls" as legitimate; verify,
-  don't assume.
+- **Never add a new third-party dependency (pip or npm) without the
+  human's explicit approval, and vet it before asking**: exact name match
+  to what you intend (watch for typosquats, e.g. `python-dotenv` vs.
+  `dotenv`), real maintenance history, no suspicious install-time scripts.
+  When asking, give the package name, why it's needed, its rating, and its
+  users/downloads (most reliable metric available). Verify even a package
+  you "recall" as legitimate.
 - No secrets, API keys, or credentials in code, commit messages, or
-  `CLAUDE.md`/ticket text — see "Definition of done" above; it's repeated
-  here because it's a security rule first and a completeness rule second.
+  `CLAUDE.md`/ticket text (the secrets hook catches common key shapes, not
+  all). Keep secrets in the one service/config store that owns them (e.g.
+  a secret manager), not scattered across projects or in CI variables that
+  don't need them.
 - These agents *are* the product, not just the thing writing it: a diff
   touching an MCP tool, an agent's system prompt, or anything that puts
   tool output or conversation history back in front of the model needs the
@@ -140,9 +130,3 @@ backed by a stronger independent reviewer.
   one-off mistake, propose the harness fix alongside the local one — see
   the `guardrails` skill's note on promoting a repeatedly-violated
   [PROMPT] rule to something tooled.
-- Keep function comments/summaries minimal — 30 words or less. Exception:
-  a docstring meant to give an LLM/agent context (e.g. an MCP tool
-  description) can run longer if that context is genuinely needed. When
-  trimming, cut restated-*what* (the code already says it) before cutting
-  non-obvious *why* (a security invariant, a footgun, a known limitation) —
-  see `guardrails`'s note on comments that just narrate the code.

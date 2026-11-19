@@ -21,6 +21,13 @@ all driven by GitHub Issue tickets that trace back to a PRD/TRD.
   principles, design patterns (including MCP/A2A topology and agent-harness
   reliability patterns), algorithms, a 5-tier guardrail framework, and the
   ticket workflow mechanics.
+- **`.claude/rules/`** — path-scoped code standards (line comments,
+  readability, length limits, naming) that load only when a matching file
+  is read or edited, for subagents too.
+- **`.claude/settings.json` / `.claude/hooks/`** — the tooling-enforced
+  part: commit/push/merge, issue close/edit and dependency installs prompt
+  for approval, and a PreToolUse hook blocks writing credential-shaped
+  strings (needs `uv` on PATH).
 - **`.claude/harness/templates/`** — PRD/TRD/ticket templates.
 - **`justfile` / `.githooks/` / `.github/`** — task-runner, warn-only
   pre-commit, and issue-template/deploy-workflow conventions.

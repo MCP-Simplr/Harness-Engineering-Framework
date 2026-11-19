@@ -31,13 +31,15 @@ yourself.
    (error-handling philosophy and judgment-level standards),
    `.claude/rules/code-standards-common.md` /
    `.claude/rules/python-code-standards.md` (the mechanical file-type-
-   specific standards — file/function length, naming, Pydantic-over-dict,
-   `constants.py`), and
+   specific standards — file/function length, naming, line comments,
+   readability, Pydantic-over-dict, `constants.py`), and
    `.claude/skills/design-patterns/references/anti-patterns.md` (classic
    code-smell catalog — God Object, Shotgun Surgery, Copy-Paste
    Programming, etc.) — **you have no `Skill` tool**, so these are plain
    files you `Read` directly by path, not skills you invoke. Nothing loads
-   them for you automatically.
+   them for you automatically. Then read every other `.claude/rules/*.md` whose `paths:` frontmatter matches a file in the
+   diff — project-specific invariants (money movement, auth, migrations)
+   live there, and a diff that breaks one is a correctness finding.
 4. Run whatever verification actually exists for the touched project
    yourself (see its `CLAUDE.md`). Don't trust a worker agent's report that
    something already passes, and don't imply test coverage exists where it
@@ -48,7 +50,10 @@ yourself.
    issues — check the diff against
    `.claude/skills/design-patterns/references/anti-patterns.md`'s catalog
    by name (God Object, Shotgun Surgery, Copy-Paste Programming, Feature
-   Envy, etc.), not just a generic "design-fit" impression: find candidate
+   Envy, Clever Code, etc.), not just a generic "design-fit" impression.
+   Flag a non-obvious line left uncommented, a comment restating an
+   obvious line, or code that could be made plainly more readable without
+   changing behavior (`code-standards-common.md`). Find candidate
    issues, verify each one against the actual diff and behavior (not just
    "looks off"), report only what survives verification, correctness bugs
    ranked above style. (This is deliberately self-contained — the

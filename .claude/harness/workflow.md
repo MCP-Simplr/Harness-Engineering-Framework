@@ -106,10 +106,10 @@ generic SW knowledge (large, on-demand).
 `.claude/rules/*.md` is a related but separate native mechanism — path-
 scoped by a `paths:` frontmatter glob, not description-matched like a
 skill. It loads on `Read`/`Write`/`Edit` of a matching file, for the
-orchestrating session *and* for subagents (this is tied to the
-CLAUDE.md-hierarchy/file-tool-use loading path, not the `Skill` tool), so
-it's the right mechanism for mechanical, file-type-specific rules a worker
-subagent needs to see even though it has no `Skill` tool. See
+orchestrating session, and should do the same for subagents (it's tied to
+the file-tool-use loading path, not the `Skill` tool — not yet verified
+here). Agent files tell subagents to read matching rule files explicitly
+anyway, so nothing depends on auto-loading. See
 `.claude/rules/code-standards-common.md` and `python-code-standards.md`.
 
 ## 4. MCP/A2A (tool + agent connectivity)
@@ -152,7 +152,8 @@ subagent needs to see even though it has no `Skill` tool. See
   agents, for genuine independence rather than the same model re-reading
   its own output. Runs
   the project's tests/lint, checks the diff against `agentic-rules.md`,
-  `guardrails.md`, and `swe-principles.md` (read directly by path — it has
+  `guardrails.md`, `swe-principles.md`, the
+  `.claude/rules/` files, and `anti-patterns.md` (read directly by path — it has
   no `Skill` tool) and the ticket's acceptance criteria, using a
   self-contained find-then-verify methodology (it can't reach the built-in
   `code-review` skill from inside a subagent). Reports a verdict; has no

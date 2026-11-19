@@ -1,0 +1,53 @@
+{
+  "permissions": {
+    "ask": [
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(git merge *)",
+      "Bash(gh pr merge *)",
+      "Bash(gh issue close *)",
+      "Bash(gh issue edit *)",
+      "Bash(gh issue reopen *)",
+      "Bash(uv add *)",
+      "Bash(uv pip install *)",
+      "Bash(pip install *)",
+      "Bash(npm install *)",
+      "Bash(npm i *)",
+      "Bash(npm add *)",
+      "PowerShell(git commit *)",
+      "PowerShell(git push *)",
+      "PowerShell(git merge *)",
+      "PowerShell(gh pr merge *)",
+      "PowerShell(gh issue close *)",
+      "PowerShell(gh issue edit *)",
+      "PowerShell(gh issue reopen *)",
+      "PowerShell(uv add *)",
+      "PowerShell(pip install *)",
+      "PowerShell(npm install *)",
+      "PowerShell(npm i *)",
+      "PowerShell(npm add *)",
+      "Bash(git -C * commit *)",
+      "Bash(git -C * push *)",
+      "Bash(git -C * merge *)",
+      "PowerShell(git -C * commit *)",
+      "PowerShell(git -C * push *)",
+      "PowerShell(git -C * merge *)",
+      "PowerShell(uv pip install *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run --no-project python -I \"$CLAUDE_PROJECT_DIR/.claude/hooks/block_secrets.py\"",
+            "timeout": 15,
+            "statusMessage": "Scanning for secrets"
+          }
+        ]
+      }
+    ]
+  }
+}
